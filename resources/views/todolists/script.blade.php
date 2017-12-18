@@ -57,21 +57,23 @@
 
 		// Add a new task
 		var addTask = function() {
-			console.log("Add task...");
+			
 		  //Create a new list item with the text from #new-task:
-
-		  var listItem = createNewTaskElement(taskInput.value);
-		  console.log(listItem);
-		  //Append listItem to incompleteTasksHolder
-		  incompleteTasksHolder.appendChild(listItem);
-		  bindTaskEvents(listItem, taskCompleted);  
+		  if(taskInput.value != ''){
+		  	var listItem = createNewTaskElement(taskInput.value);
+		  
+			//Append listItem to incompleteTasksHolder
+			incompleteTasksHolder.appendChild(listItem);
+			bindTaskEvents(listItem, taskCompleted);
+		  }
+		    
 		  
 		  taskInput.value = "";   
 		}
 
 		// Edit an existing task
 		var editTask = function() {
-			console.log("Edit Task...");
+			
 
 			var listItem = this.parentNode;
 
@@ -98,7 +100,7 @@
 
 		// Delete an existing task
 		var deleteTask = function() {
-			console.log("Delete task...");
+			
 			var listItem = this.parentNode;
 			var ul = listItem.parentNode;
 
@@ -108,7 +110,7 @@
 
 		// Mark a task as complete 
 		var taskCompleted = function() {
-			console.log("Task complete...");
+			
 		  //Append the task list item to the #completed-tasks
 		  var listItem = this.parentNode;
 		  completedTasksHolder.appendChild(listItem);
@@ -117,7 +119,7 @@
 
 		// Mark a task as incomplete
 		var taskIncomplete = function() {
-			console.log("Task Incomplete...");
+			
 		  // When checkbox is unchecked
 		  // Append the task list item #incomplete-tasks
 		  var listItem = this.parentNode;
@@ -126,7 +128,7 @@
 		}
 
 		var bindTaskEvents = function(taskListItem, checkBoxEventHandler) {
-			console.log("Bind list item events");
+			
 		  //select taskListItem's children
 		  var checkBox = taskListItem.querySelector("input[type=checkbox]");
 		  var editButton = taskListItem.querySelector("button.edit");
@@ -143,7 +145,7 @@
 		}
 
 		var ajaxRequest = function() {
-			console.log("AJAX Request");
+			
 		}
 
 		// Set the click handler to the addTask function
@@ -242,9 +244,9 @@ function updateTodoList(){
 		data: todoListData($('#updatetodolistid').val()),
 		success: function(data){
 			$('.todo-card').each(function(){
-				console.log($(this).children('.todolist-detail').children('.todolist-detail-info').children('#todolistid').val());
+				;
 				if($(this).children('.todolist-detail').children('.todolist-detail-info').children('#todolistid').val() == $('#updatetodolistid').val()){
-					console.log('test');
+					
 					$(this).replaceWith(data);
 				}
 			});
@@ -265,18 +267,18 @@ function getTodoList(todoListId){
 		data: todoListData(todoListId),
 		success: function(data){
 			var parsedData = jQuery.parseJSON( data );
-			console.log(parsedData);
+			
 
 			var JSONObject1 = parsedData.incomplete_tasks;
 
 			// for (var i = 0; i < parsedData.incomplete_tasks.length; i++) {
 			// 	$('#incomplete-tasks').append('<li><input type="checkbox"><input type="hidden" value="'+parsedData['incomplete_tasks'][i].id+'"><label>' + parsedData['incomplete_tasks'][i].name + '</label><input type="text" class="form-control"><button type="button" class="edit">Edit</button><button type="button" class="delete">Delete</button></li>');
-			// 	console.log('test');
+			
 			// }
 
 			for (var key in JSONObject1) {
 				if (JSONObject1.hasOwnProperty(key)) {
-			      // console.log(JSONObject1[key]["name"] + ", " + JSONObject1[key]["status"]);
+			      
 			      $('#incomplete-tasks').append('<li><input type="checkbox"><input type="hidden" value="'+JSONObject1[key]["id"]+'"><label>' + JSONObject1[key]["name"] + '</label><input type="text" class="form-control"><button type="button" class="edit">Edit</button><button type="button" class="delete">Delete</button></li>');
 			  }
 			}
@@ -285,14 +287,14 @@ function getTodoList(todoListId){
 
 			for (var key in JSONObject2) {
 				if (JSONObject2.hasOwnProperty(key)) {
-			      // console.log(JSONObject2[key]["name"] + ", " + JSONObject2[key]["status"]);
+			      
 			      $('#completed-tasks').append('<li><input type="checkbox" checked><input type="hidden" value="'+JSONObject2[key]["id"]+'"><label>' + JSONObject2[key]["name"] + '</label><input type="text" class="form-control"><button type="button" class="edit">Edit</button><button type="button" class="delete">Delete</button></li>');
 			  }
 			}
 
 			// for (var j = 0; j < parsedData.completed_tasks.length; j++) {
 			// 	$('#completed_tasks').append('<li><input type="checkbox" checked><label>' + parsedData['completed_tasks'][j].name + '</label><input type="text" class="form-control"><button class="edit">Edit</button><button class="delete">Delete</button></li>');
-			// 	console.log('test');
+			
 			// }
 
 			$('#todolist-name').val(parsedData.name)
@@ -317,7 +319,7 @@ function getUserByEmail(email){
 			}
 			else{
 				var parsedData = $.parseJSON(data);
-				console.log(parsedData);
+				
 				var collaboratorElement = '<li class="collaborator-id" data-userid="'+ parsedData.id+'" >'+ parsedData.name +' - '+parsedData.email+'<i data-toggle="tooltip" title="Remove" class="fa fa-minus-circle remove-tdl-collaborator" aria-hidden="true"></i></li>';
 				$('.todolist-collaborators-list').append(collaboratorElement);
 				
@@ -501,10 +503,15 @@ $('body').on('click', '.collaborator-tdl-btn', function(){
 });
 
 $('body').on('click', '#create-todolist-btn', function(){
-	if($('#updatetodolistid').val()==0){
+
+	if($('#todolist-name').val() == ''){
+		bootbox.alert('Please input to-do list name!');
+	}
+
+	else if($('#updatetodolistid').val()==0 && $('#todolist-name').val() != ''){
 		createTodoList();
 	}
-	else{
+	else if($('#updatetodolistid').val()!=0 && $('#todolist-name').val() != ''){
 		updateTodoList();
 	}
 	
@@ -526,7 +533,6 @@ $('#add-new-collaborator').on('click', function(){
 	getUserByEmail($('#new-collaborator-email').val());
 	$('#new-collaborator-email').val('');
 });
-// $('#create-todolist-btn').on('click', createTodoList());
 
 $('#new-todolist-modal').on('hidden.bs.modal', function(){
 	document.getElementById('create-update-todolist-form').reset();
